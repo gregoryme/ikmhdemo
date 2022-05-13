@@ -1,0 +1,143 @@
+<!--
+ =================================
+ ADMIN. SCHOOL STUDIO EDITOR
+ =================================
+ -->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>IKMH | Studio Account Editor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<!--header-->
+<div th:insert="header :: ikmh_header"></div>
+<!--end-of-header-->
+<!--specific buttons-->
+<p>&nbsp;</p>
+<div class="container-fluid text-center">
+    <div>
+        <a th:href="@{/admin}" class="btn btn-sm btn-primary" style="margin: 1px; font-size: x-small;">Main page</a>
+        <a th:href="@{/showSchoolsPage}" class="btn btn-sm btn-primary" style="margin: 1px; font-size: x-small;">School studios</a>
+        <a th:href="@{/logout}" class="btn btn-sm btn-outline-primary" style="margin: 1px; font-size: x-small;">Logout</a>
+    </div>
+</div>
+<!--end of specific buttons-->
+<p>&nbsp;</p>
+<div class="header d-flex justify-content-center">
+        <h4 class="text-primary">School Studio Editor</h4>
+</div>
+<p>&nbsp;</p>
+<!------------------------------------>
+<!---------------FORM----------------->
+<!------------------------------------>
+<div class="container">
+    <form action="#" th:action="@{/saveTheSchool}" th:object="${school}" method="POST">
+
+        <input type="hidden" th:field="*{id}" />
+
+        <div class="form-group row">
+            <label for="schoolName" class="col-sm-4 col-form-label">School&nbsp;Name</label>
+            <div class="col">
+                <input type="text" class="form-control" th:field="*{schoolName}" id="schoolName" placeholder="School Name"
+                       maxlength="250" required="true">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="schoolCity" class="col-sm-4 col-form-label">School&nbsp;City</label>
+            <div class="col">
+                <input type="text" class="form-control" th:field="*{schoolCity}" id="schoolCity" placeholder="School City"
+                       maxlength="250" required="true">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="contactPersonName" class="col-sm-4 col-form-label">Contact&nbsp;Person&nbsp;Name</label>
+            <div class="col">
+                <input type="text" class="form-control" th:field="*{contactPersonName}" id="contactPersonName"
+                       maxlength="250" placeholder="Contact Person Name">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="contactEmail" class="col-sm-4 col-form-label">Contact&nbsp;Email</label>
+            <div class="col">
+                <input type="email" class="form-control col-sm-4" th:field="*{contactEmail}" id="contactEmail"
+                       maxlength="250" placeholder="Contact Email">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="contactPhone" class="col-sm-4 col-form-label">Contact&nbsp;Phone</label>
+            <div class="col">
+                <input type="text" class="form-control col-sm" th:field="*{contactPhone}" id="contactPhone"
+                       maxlength="250" placeholder="Contact Phone">
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="notes" class="col-sm-4 col-form-label">Notes</label>
+            <div class="col">
+                <textarea class="form-control col-sm-4" rows="5" th:field="*{notes}" id="notes"
+                          maxlength="250" placeholder="Notes"></textarea>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-sm btn-block">Update</button>
+
+    </form>
+
+    <p>&nbsp;</p>
+
+    <div th:if="${school.id != 1}">
+
+        <!-- DELETE OPERATION (MODAL) -->
+        <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+            Delete The School Studio
+        </button>
+        <!-- Modal -->
+        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title text-danger" id="deleteModalLabel">Attention!</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-dark">
+                        The deleted school studio cannot be restored!
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Cancel</button>
+                        <a th:href="@{/deleteTheSchool/{id}(id = ${school.id})}"   class="btn btn-danger" role="button">Delete</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END OF DELETE OPERATION (MODAL) -->
+
+    </div>
+
+    <div th:if="${school.id == 1}">
+        <a th:href="@{/deleteTheSchool/{id}(id = ${school.id})}" class="btn btn-sm btn-danger disabled">Delete The School Studio</a>
+    </div>
+
+</div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<!------------------->
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<!--FOOTER-->
+<div th:insert="footer :: ikmh_footer"></div>
+<!--END-OF-FOOTER-->
+</body>
+</html>

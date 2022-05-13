@@ -1,0 +1,107 @@
+/*
+* CSS for IKMH project
+*/
+
+
+
+
+
+
+/* BIG */
+@media only screen and (min-device-width: 700px) {
+    .font-table {
+        font-size: small;
+    }
+    .text-application {
+        font-size: medium;
+    }
+    .text-headers {
+        font-size: large;
+    }
+    .image-footer {
+        width: 80px;
+    }
+}
+
+/* small */
+@media only screen and (max-device-width: 500px) {
+    .font-table {
+        font-size: x-small;
+    }
+    .text-application {
+        font-size: x-small;
+    }
+    .text-headers {
+        font-size: small;
+    }
+    .image-footer {
+        width: 60px;
+    }
+}
+
+
+
+.zoomed_read {
+    transform: scale(0.5);
+    transform-origin: 0 0;
+}
+
+.btn-primary {
+    background-color: #03387e !important;
+    border-color:     #03387e !important;
+    color: white;
+}
+
+.btn-outline-primary {
+    background-color: white     !important;
+    border-color:     #03387e   !important;
+    color:            #03387e   !important;
+}
+
+.text-primary {
+    color:            #03387e   !important;
+}
+
+.btn-danger {
+    background-color: #b01b2f !important;
+    border-color:     #b01b2f !important;
+    color: white;
+}
+
+.btn-outline-danger {
+    background-color: white     !important;
+    border-color:     #b01b2f   !important;
+    color:            #b01b2f   !important;
+}
+
+.text-danger {
+    color:            #b01b2f   !important;
+}
+
+.btn-success {
+    background-color: #04824a !important;
+    border-color:     #04824a !important;
+    color: white;
+}
+
+.btn-outline-success {
+    background-color: white     !important;
+    border-color:     #04824a   !important;
+    color:            #04824a   !important;
+}
+
+/*.a, .a:hover, .a:visited, .a:focus {*/
+/*    text-decoration: none !important;*/
+/*}*/
+
+/*.btn-primary:hover, .btn-primary:active, .btn-primary:visited*/
+
+.read_center {
+    /*margin: -88px auto 0 auto;*/
+    /*padding: 1px;*/
+    /*background: #fff;*/
+    min-height: 800px;
+    position: relative;
+    bottom: 0px;
+    z-index: -9999;
+}

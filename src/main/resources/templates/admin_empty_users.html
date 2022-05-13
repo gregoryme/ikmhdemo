@@ -1,0 +1,179 @@
+<!--
+ =================================
+ ADMIN. "EMPTY USERS" PAGE
+ with Info and Email modals
+ =================================
+ -->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>IKMH | Empty Users List</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<!--header-->
+<div th:insert="header :: ikmh_header"></div>
+<!--end-of-header-->
+<!--specific buttons-->
+<p>&nbsp;</p>
+<div class="text-center">
+    <div>
+        <a th:href="@{/admin}" class="btn btn-sm btn-primary" style="margin: 1px; font-size: x-small;">Main page</a>
+        <a th:href="@{/logout}" class="btn btn-sm btn-outline-primary" style="margin: 1px; font-size: x-small;">Logout</a>
+    </div>
+</div>
+<!--end of specific buttons-->
+<p>&nbsp;</p>
+<div class="text-center">
+        <h5 class="text-primary">Extended users control (empty users list)</h5>
+        <span class="text-primary">
+            <u>Note</u>. The "Empty user" situation can occur in the following cases:<br>
+            the applicant has signed up to the system, but did not submit an application;<br>
+            the faculty member has signed up to the system, but did not fill an account.
+        </span>
+</div>
+<div th:if="${isListEmpty == true}" class="header d-flex justify-content-center">
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+        <h6 class="text-success">There are no empty users!</h6>
+</div>
+<!--------------------------------->
+<!-------------TABLE--------------->
+<!--------------------------------->
+<p>&nbsp;</p>
+<div class="container" th:if="${isListEmpty == false}">
+    <table class="table table-bordered table-striped table-responsive-md font-table">
+        <thead>
+        <tr>
+            <th>System ID</th>
+            <th>User Name (Email)</th>
+            <th>Confirm. Status</th>
+            <th>Role</th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${emptyUsers}">
+
+            <!-- 1, 2 -->
+            <td th:text="${user.id}"></td>
+            <td th:text="${user.username}"></td>
+
+            <!-- 3 -->
+            <td th:if="${user.getConfirmed() == true}" class="text-success">Confirmed</td>
+            <td th:if="${user.getConfirmed() == false}" class="text-danger">Non confirmed</td>
+
+            <!-- 4 -->
+            <td th:if="${user.getAcademyMember() == T(dev.kofe.ikmhdemo.model.AcademyMember).STUDENT}">Applicant</td>
+            <td th:if="${user.getAcademyMember() == T(dev.kofe.ikmhdemo.model.AcademyMember).FACULTY}">Faculty Member</td>
+
+            <!-- 5 -->
+            <td>
+                <!-- Button modal: SEND A MESSAGE -->
+                <button type="button" class="btn btn-sm btn-outline-primary" style="font-size: xx-small" th:onclick="'showModalSendMessage(' + ${user.id} + ')'">
+                    Send a message
+                </button>
+            </td>
+            <td>
+                <!-- Button modal: DELETE OPERATION -->
+                <button type="button" class="btn btn-sm btn-danger" style="font-size: xx-small" th:onclick="'showModalDelete(' + ${user.id} + ')'">
+                    Delete
+                </button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<!------------------->
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+<!--FOOTER-->
+<div th:insert="footer :: ikmh_footer"></div>
+<!--END-OF-FOOTER-->
+
+<!---------------------------->
+<!---------- MODALS ---------->
+<!---------------------------->
+
+<!-- Modal: SEND A MESSAGE -->
+<div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="messageModalLabel">
+                    Send a message
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- MESSAGE FORM -->
+                <form id="formMessage" action="" method="POST">
+                                            <textarea class="form-control" rows="5"
+                                                      name="messageText" id="message">
+                                            </textarea>
+                    <button type="submit" class="btn btn-primary btn-sm btn-block">Send</button>
+                </form>
+                <!-- END OF MESSAGE FORM -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- AND OF MODAL (DELETE OPERATION) -->
+
+<!-- Modal: DELETE OPERATION -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger" id="deleteModalLabel">Attention!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-dark">
+                The deleted user cannot be restored!
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Cancel</button>
+                <a id="buttonDelete" href="" class="btn btn-danger" role="button">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END OF DELETE OPERATION (MODAL) -->
+
+<!-------SCRIPT (FOR MODAL)---------->
+<script th:inline="javascript">
+
+    function showModalDelete(id) {
+        let delModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        let buttonDeleteElement = document.getElementById('buttonDelete');
+        buttonDeleteElement.setAttribute('href', '/deleteUser/' + id);
+        delModal.show();
+    }
+
+    function showModalSendMessage(id) {
+        let msgModal = new bootstrap.Modal(document.getElementById('messageModal'));
+        let formMessageElement = document.getElementById('formMessage');
+        /*<![CDATA[*/
+        formMessageElement.setAttribute('action',
+            '/sendEmailToUnknownUserXLite/' + id + '/' + [[${returnSignature}]]);
+        /*]]>*/
+        msgModal.show();
+    }
+</script>
+<!--------- END OF SCRIPT ---------->
+
+</body>
+</html>

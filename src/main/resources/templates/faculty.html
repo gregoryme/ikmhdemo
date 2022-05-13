@@ -1,0 +1,135 @@
+<!--
+ ==========================
+ FACULTY MEMBER. MAIN PAGE
+ ==========================
+ -->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>IKMH | Faculty Member Account</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<!--header-->
+<div th:insert="header :: ikmh_header"></div>
+<!--end-of-header-->
+<!--specific buttons-->
+<p>&nbsp;</p>
+<div class="header d-flex justify-content-center">
+    <div>
+        <a th:href="@{/faculty_editor}" class="btn btn-sm btn-primary">Your Account</a>
+        <a th:href="@{/logout}" class="btn btn-sm btn-outline-primary">Logout</a>
+    </div>
+</div>
+<!--end of specific buttons-->
+<p>&nbsp;</p>
+<div class="d-flex justify-content-center">
+    <h5 class="text-primary">Hello, <span th:text="${title} + ' ' + ${name} + ' ' +${surname}"></span>!</h5>
+</div>
+<p>&nbsp;</p>
+<div class="d-flex justify-content-center" style="margin-bottom: 20px;">
+    <span class="text-prime" id="voteText"></span>
+</div>
+<div class="d-flex justify-content-center">
+    <a th:href="@{/showVotePageListOfApplicants}" id="voteButton" class="btn btn-primary btn-lg">&nbsp;VOTING&nbsp;</a>
+</div>
+<p>&nbsp;</p>
+<div class="d-flex justify-content-center" >
+    <span class="text-dark">You local time is:&nbsp;<span id="currentDateLocal" class="text-dark"></span>
+    </span>
+</div>
+<div class="d-flex justify-content-center">
+    <span class="text-primary">Server time is:&nbsp;<span id="currentDateUTC" class="text-primary"></span>
+    </span>
+</div>
+<!------------------->
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<!--FOOTER-->
+<div th:insert="footer :: ikmh_footer"></div>
+<!--END-OF-FOOTER-->
+<!------------------------------------>
+<!--------------SCRIPT---------------->
+<!---------- time matter ------------->
+<!------------------------------------>
+<script th:inline="javascript">
+    /**
+     * Copyright (C) by kofe.dev
+     */
+    let currentDateUTCTextElement   = document.getElementById("currentDateUTC");
+    let currentDateLocalTextElement = document.getElementById("currentDateLocal");
+    //let deltaTextElement            = document.getElementById("delta");
+    let voteButtonElement           = document.getElementById("voteButton");
+    let voteTextElement             = document.getElementById("voteText");
+    /*<![CDATA[*/
+    // deadline to milliseconds:
+    let deadlineDate = [[${deadline.deadlineDate}]];
+    let deadlineTime = [[${deadline.deadlineTime}]];
+    let bigDeadlineDateString = deadlineDate + ' ' + deadlineTime;
+    let dateDeadlineFull = new Date(bigDeadlineDateString);
+    const dateDeadlineMilliseconds = dateDeadlineFull.getTime(); // main
+    /*]]>*/
+    const MILLISECONDS_IN_ONE_DAY    = 86400000;
+    const MILLISECONDS_IN_ONE_HOUR   = 3600000;
+    const MILLISECONDS_IN_ONE_MINUTE = 60000;
+    const MILLISECONDS_IN_ONE_SECOND = 1000;
+    setInterval(function () {
+        let currentDate = new Date();
+        // get local time:
+        let currentDateMilliseconds = currentDate.getTime();
+        // convert local time to UTC time:
+        currentDateMilliseconds =
+            currentDateMilliseconds + currentDate.getTimezoneOffset() * MILLISECONDS_IN_ONE_MINUTE;
+        // delta calculation operations:
+        let currentDeltaInMilliseconds = dateDeadlineMilliseconds - currentDateMilliseconds; // main
+        let currentDeltaInDays =
+            Math.floor(currentDeltaInMilliseconds / MILLISECONDS_IN_ONE_DAY);
+        let remInMilliseconds =
+            currentDeltaInMilliseconds - currentDeltaInDays * MILLISECONDS_IN_ONE_DAY;
+        let currentDeltaPartInHours =
+            Math.floor(remInMilliseconds / MILLISECONDS_IN_ONE_HOUR);
+        let remInMillisecondsAfterHours =
+            remInMilliseconds - currentDeltaPartInHours * MILLISECONDS_IN_ONE_HOUR;
+        let currentDeltaPartInMinutes =
+            Math.floor(remInMillisecondsAfterHours / MILLISECONDS_IN_ONE_MINUTE);
+        let remInMillisecondsAfterMinutes =
+            remInMillisecondsAfterHours - currentDeltaPartInMinutes * MILLISECONDS_IN_ONE_MINUTE;
+        let currentDeltaPartInSeconds =
+            Math.floor(remInMillisecondsAfterMinutes / MILLISECONDS_IN_ONE_SECOND);
+        let textAboutUTCTime = currentDate.toLocaleString('en-IN', {timeZone: 'UTC'});
+        let textAboutLocalTime = currentDate.toLocaleString('en-IN');
+        // put text about time:
+        currentDateUTCTextElement.textContent   = textAboutUTCTime;
+        currentDateLocalTextElement.textContent = textAboutLocalTime;
+        // text about delta (deadline matter):
+        let deltaString;
+        if (currentDeltaInMilliseconds >= 0) {
+            voteButtonElement.setAttribute("class", "btn btn-primary btn-l disabled");
+            deltaString =
+                currentDeltaInDays + ' days | ' +
+                currentDeltaPartInHours + ' hours | ' +
+                currentDeltaPartInMinutes + ' minutes | ' +
+                currentDeltaPartInSeconds + ' seconds.';
+            voteTextElement.textContent =
+                "The application process is still going on. The voting will be open after: " + deltaString;
+        } else {
+            deltaString = "Sorry, deadline has been missed.";
+            voteButtonElement.setAttribute("class", "btn btn-primary btn-l");
+            voteTextElement.textContent = "It's time to vote";
+        }
+    }, 100);
+</script>
+<!-------END OF SCRIPT------->
+</body>
+</html>

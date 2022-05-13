@@ -1,0 +1,477 @@
+<!--
+ =================================
+ ADMIN. INFO ON THE FACULTY MEMBER
+ =================================
+ -->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>IKMH | Faculty Member Info</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<!--header-->
+<div th:insert="header :: ikmh_header"></div>
+<!--end-of-header-->
+<!--specific buttons-->
+<p>&nbsp;</p>
+<div class="container-fluid text-center">
+    <div>
+        <a th:href="@{/admin}" class="btn btn-sm btn-primary" style="margin: 1px; font-size: x-small;">Main page</a>
+        <a th:href="@{/showAllApplicantsForAdmin/0/0/0}" class="btn btn-sm btn-outline-primary" style="margin: 1px; font-size: x-small;">Applications list</a>
+        <a th:href="@{/showAllFacultyMembersForAdmin}" class="btn btn-sm btn-outline-primary" style="margin: 1px; font-size: x-small;">Faculty list</a>
+        <a th:href="@{/logout}" class="btn btn-sm btn-outline-primary" style="margin: 1px; font-size: x-small;">Logout</a>
+    </div>
+</div>
+<!--end of specific buttons-->
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<div class="header d-flex justify-content-center">
+        <h4 class="text-primary">Faculty Member Info</h4>
+</div>
+
+<div class="container d-flex justify-content-center">
+    <table class="table table-borderless text-dark font-table">
+        <thead>
+        <tr>
+            <th style="width: 30%"></th>
+            <th style="width: 70%"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>Title:</td>
+            <td><span th:text="${faculty.title}"></span></td>
+        </tr>
+        <tr>
+            <td>Name:</td>
+            <td><span th:text="${faculty.name} + ' ' + ${faculty.surname}"></span></td>
+        </tr>
+        <tr>
+            <td>Email (login username):</td>
+            <td><span th:text="${faculty.user.username}"></span></td>
+        </tr>
+        <tr>
+            <td>Email confirmation status:</td>
+            <td th:if="${faculty.user.getConfirmed() == true}"><span class="text-success">Confirmed</span></td>
+            <td th:if="${faculty.user.getConfirmed() == false}"><span class="text-danger">Not confirmed yet</span></td>
+        </tr>
+        <tr>
+            <td>Phone:</td>
+            <td><span th:text="${faculty.phone}"></span></td>
+        </tr>
+        <tr>
+            <td>Note:</td>
+            <td><span th:text="${faculty.notes}"></span></td>
+        </tr>
+        <tr>
+            <td>Active Status:</td>
+            <td th:if="${faculty.active == true}" class="text-success">Active</td>
+            <td th:if="${faculty.active == false}" class="text-danger">Inactive</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<p>&nbsp;</p>
+<div class="header d-flex justify-content-center">
+    <div style="width: 1000px">
+        <h5 class="text-primary">Faculty Member's Voting list</h5>
+    </div>
+</div>
+<div th:if="${areThereAnyVotes==false}" class="header d-flex justify-content-center">
+    <span class="text-danger">There are not any votes yet.</span>
+</div>
+<p>&nbsp;</p>
+<div th:if="${areThereAnyVotes==true}" class="container">
+        <table class="table table-bordered table-responsive-md font-table">
+            <thead>
+            <tr>
+                <th style="width: 45%">Applicant's Name</th>  <!-- 1 -->
+                <th style="width: 10%">Vote</th>              <!-- 2 -->
+                <th style="width: 45%">Notes</th>             <!-- 3 -->
+                <th style="width: 10%"></th>            <!-- 4 -->
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="vote : ${votes}">
+                <!-- 1 -->
+                <td th:text="${vote.application.studentName} + ${vote.application.studentSurname}"></td>
+                <!-- 2 -->
+                <td th:text="${vote.voteValue}"></td>
+                <!-- 3 -->
+                <td th:text="${vote.notes}" style="word-wrap: anywhere"></td>
+                <!-- 4 -->
+                <td>
+                    <button type="button"
+                            th:data_application_id="${vote.application.id}"
+                            th:data_studentEmail="${vote.application.user.username}"
+                            th:data_studentName="${vote.application.studentName}"
+                            th:data_studentMiddleName="${vote.application.studentMiddleName}"
+                            th:data_studentSurname="${vote.application.studentSurname}"
+                            th:data_studentAge="${vote.application.studentAge}"
+                            th:data_studentSchoolName="${vote.application.getSchoolStudio().schoolName}"
+                            th:data_studentSchoolCity="${vote.application.getSchoolStudio().schoolCity}"
+                            th:data_studentWork_1="${vote.application.workExampleLink1}"
+                            th:data_studentWork_2="${vote.application.workExampleLink2}"
+                            th:data_studentWork_3="${vote.application.workExampleLink3}"
+                            th:data_studentMotivation="${vote.application.motivation}"
+                            th:data_studentBio="${vote.application.bio}"
+                            th:data_studentExpectations="${vote.application.expectations}"
+                            th:data_studentSpecialization="${vote.application.specialization}"
+                            th:data_studentNotes="${vote.application.notes}"
+
+                            class="btn btn-sm btn-outline-primary border-0"
+                            th:onclick="showModalInfo(
+                                                        this.getAttribute('data_application_id'),
+                                                        this.getAttribute('data_studentEmail'),
+                                                        this.getAttribute('data_studentName'),
+                                                        this.getAttribute('data_studentMiddleName'),
+                                                        this.getAttribute('data_studentSurname'),
+                                                        this.getAttribute('data_studentAge'),
+                                                        this.getAttribute('data_studentSchoolName'),
+                                                        this.getAttribute('data_studentSchoolCity'),
+                                                        this.getAttribute('data_studentWork_1'),
+                                                        this.getAttribute('data_studentWork_2'),
+                                                        this.getAttribute('data_studentWork_3'),
+                                                        this.getAttribute('data_studentMotivation'),
+                                                        this.getAttribute('data_studentBio'),
+                                                        this.getAttribute('data_studentExpectations'),
+                                                        this.getAttribute('data_studentSpecialization'),
+                                                        this.getAttribute('data_studentNotes')
+                                        )">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-info-square" viewBox="0 0 16 16">
+                            <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                            <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                        </svg>
+
+                    </button>
+
+                </td>
+            </tr>
+            </tbody>
+        </table>
+</div>
+
+<p>&nbsp;</p>
+
+<div th:if="${areThereAnyApplicationsWithoutVoteByTheFaculty == true}" class="header d-flex justify-content-center">
+    <div style="width: 1000px">
+        <h5 class="text-primary">Applicants without votes</h5>
+    </div>
+    <p>&nbsp;</p>
+</div>
+
+<div th:if="${areThereAnyApplicationsWithoutVoteByTheFaculty == true}" class="container d-flex justify-content-center">
+
+            <table class="table table-bordered table-responsive-md">
+                <thead>
+                <tr>
+                    <th style="width: 95%">Name</th>
+                    <th style="width: 5%"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="applicant : ${applicationsWithoutVotes}">
+                    <!-- 1 -->
+                    <td th:text="${applicant.studentName} + ' ' + ${applicant.studentSurname}"></td>
+                    <!-- 2 -->
+                    <td>
+
+                        <button type="button"
+                                th:data_application_id="${applicant.id}"
+                                th:data_studentEmail="${applicant.user.username}"
+                                th:data_studentName="${applicant.studentName}"
+                                th:data_studentMiddleName="${applicant.studentMiddleName}"
+                                th:data_studentSurname="${applicant.studentSurname}"
+                                th:data_studentAge="${applicant.studentAge}"
+                                th:data_studentSchoolName="${applicant.getSchoolStudio().schoolName}"
+                                th:data_studentSchoolCity="${applicant.getSchoolStudio().schoolCity}"
+                                th:data_studentWork_1="${applicant.workExampleLink1}"
+                                th:data_studentWork_2="${applicant.workExampleLink2}"
+                                th:data_studentWork_3="${applicant.workExampleLink3}"
+                                th:data_studentMotivation="${applicant.motivation}"
+                                th:data_studentBio="${applicant.bio}"
+                                th:data_studentExpectations="${applicant.expectations}"
+                                th:data_studentSpecialization="${applicant.specialization}"
+                                th:data_studentNotes="${applicant.notes}"
+
+                                class="btn btn-sm btn-outline-primary border-0"
+                                th:onclick="showModalInfo(
+                                                        this.getAttribute('data_application_id'),
+                                                        this.getAttribute('data_studentEmail'),
+                                                        this.getAttribute('data_studentName'),
+                                                        this.getAttribute('data_studentMiddleName'),
+                                                        this.getAttribute('data_studentSurname'),
+                                                        this.getAttribute('data_studentAge'),
+                                                        this.getAttribute('data_studentSchoolName'),
+                                                        this.getAttribute('data_studentSchoolCity'),
+                                                        this.getAttribute('data_studentWork_1'),
+                                                        this.getAttribute('data_studentWork_2'),
+                                                        this.getAttribute('data_studentWork_3'),
+                                                        this.getAttribute('data_studentMotivation'),
+                                                        this.getAttribute('data_studentBio'),
+                                                        this.getAttribute('data_studentExpectations'),
+                                                        this.getAttribute('data_studentSpecialization'),
+                                                        this.getAttribute('data_studentNotes')
+                                        )">
+
+                            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-info-square" viewBox="0 0 16 16">
+                                <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/>
+                                <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                            </svg>
+
+                        </button>
+
+
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+    <p>&nbsp;</p>
+</div>
+<p>&nbsp;</p>
+<div class="header d-flex justify-content-center">
+        <h5 class="text-primary">Send a message to Faculty Member</h5>
+</div>
+
+<div class="container">
+    <form action="#"
+          th:action="@{/sendEmailToFacultyMember/{id_user_linked_with_faculty_member}/{id_faculty_member}
+                     (id_user_linked_with_faculty_member=${faculty.user.id}, id_faculty_member=${faculty.id})}"
+          method="POST">
+                <textarea class="form-control" rows="5"
+                          name="messageText" id="message">
+                </textarea>
+        <button type="submit" class="btn btn-primary btn-sm btn-block">Send</button>
+    </form>
+</div>
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+<div class="container">
+    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+        Delete The Faculty Member Account
+    </button>
+</div>
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<!------------------->
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+<!--FOOTER-->
+<div th:insert="footer :: ikmh_footer"></div>
+<!--END-OF-FOOTER-->
+
+<!------------------------------------>
+<!------------ Modal Info ------------>
+<!------------------------------------>
+<div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-primary" id="infoModalLabel">Info</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-dark">
+                <div class="container-fluid" style="font-size: small">
+                    <div class="row">
+                        <div class="col-md-4">System application ID:</div>
+                        <div class="col-md-8 ms-auto"><span class="text-primary" id="field_application_id"></span></div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-4">Email (login username):</div>
+                        <div class="col-md-8 ms-auto"><span class="text-primary" id="field_studentEmail"></span></div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-4">Name:</div>
+                        <div class="col-md-8 ms-auto"><span class="text-primary" id="field_studentName"></span></div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-4">Middle Name:</div>
+                        <div class="col-md-8 ms-auto"><span class="text-primary" id="field_studentMiddleName"></span></div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-4">Surname:</div>
+                        <div class="col-md-8 ms-auto"><span class="text-primary" id="field_studentSurname"></span></div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-4">Age:</div>
+                        <div class="col-md-8 ms-auto"><span class="text-primary" id="field_studentAge"></span></div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-4">School Studio:</div>
+                        <div class="col-md-8 ms-auto"><span class="text-primary" id="field_studentSchoolName"></span></div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-4">School Studio City:</div>
+                        <div class="col-md-8 ms-auto"><span class="text-primary" id="field_studentSchoolCity"></span></div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-4">Work Link N1:</div>
+                        <div class="col-md-8 ms-auto"><span class="text-primary" id="field_studentWork_1"></span></div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-4">Work Link N2:</div>
+                        <div class="col-md-8 ms-auto"><span class="text-primary" id="field_studentWork_2"></span></div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-4">Work Link N3:</div>
+                        <div class="col-md-8 ms-auto"><span class="text-primary" id="field_studentWork_3"></span></div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-4">Motivation:</div>
+                        <div class="col-md-8 ms-auto"><span class="text-primary" id="field_studentMotivation"></span></div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-4">Bio:</div>
+                        <div class="col-md-8 ms-auto"><span class="text-primary" id="field_studentBio"></span></div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-4">Expectations:</div>
+                        <div class="col-md-8 ms-auto"><span class="text-primary" id="field_studentExpectations"></span></div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-4">Specialization:</div>
+                        <div class="col-md-8 ms-auto"><span class="text-primary" id="field_studentSpecialization"></span></div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-4">Notes:</div>
+                        <div class="col-md-8 ms-auto"><span class="text-primary" id="field_studentNotes"></span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!------------------------------------->
+<!----------- Modal Delete ------------>
+<!------------------------------------->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title text-danger" id="deleteModalLabel">Attention!</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-dark">
+                The deleted account cannot be restored!
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Cancel</button>
+                <a th:href="@{/deleteTheFacultyMember/{id}(id = ${faculty.id})}"   class="btn btn-danger" role="button">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END OF MODAL DELETE -->
+
+
+<!------------------------------------>
+<!-------- SCRIPT FOR MODAL INFO ----------->
+<!------------------------------------>
+<script th:inline="javascript">
+    function showModalInfo
+    (       data_application_id,
+            data_studentEmail,
+            data_studentName,
+            data_studentMiddleName,
+            data_studentSurname,
+            data_studentAge,
+            data_studentSchoolName,
+            data_studentSchoolCity,
+            data_studentWork_1,
+            data_studentWork_2,
+            data_studentWork_3,
+            data_studentMotivation,
+            data_studentBio,
+            data_studentExpectations,
+            data_studentSpecialization,
+            data_studentNotes
+    ) {
+        let infoModal = new bootstrap.Modal(document.getElementById('infoModal'));
+
+        let field = document.getElementById('field_application_id');
+        field.textContent = data_application_id;
+
+        field = document.getElementById('field_studentEmail');
+        field.textContent = data_studentEmail;
+
+        field = document.getElementById('field_studentName');
+        field.textContent = data_studentName;
+
+        field = document.getElementById('field_studentMiddleName');
+        field.textContent = data_studentMiddleName;
+
+        field = document.getElementById('field_studentSurname');
+        field.textContent = data_studentSurname;
+
+        field = document.getElementById('field_studentAge');
+        field.textContent = data_studentAge;
+
+        field = document.getElementById('field_studentSchoolName');
+        field.textContent = data_studentSchoolName;
+
+        field = document.getElementById('field_studentSchoolCity');
+        field.textContent = data_studentSchoolCity;
+
+        field = document.getElementById('field_studentWork_1');
+        field.textContent = data_studentWork_1;
+
+        field = document.getElementById('field_studentWork_2');
+        field.textContent = data_studentWork_2;
+
+        field = document.getElementById('field_studentWork_3');
+        field.textContent = data_studentWork_3;
+
+        field = document.getElementById('field_studentMotivation');
+        field.textContent = data_studentMotivation;
+
+        field = document.getElementById('field_studentBio');
+        field.textContent = data_studentBio;
+
+        field = document.getElementById('field_studentExpectations');
+        field.textContent = data_studentExpectations;
+
+        field = document.getElementById('field_studentSpecialization');
+        field.textContent = data_studentSpecialization;
+
+        field = document.getElementById('field_studentNotes');
+        field.textContent = data_studentNotes;
+
+        infoModal.show();
+    }
+
+</script>
+
+</body>
+</html>
