@@ -3,8 +3,6 @@
 The system is developed for International Kids Media House (Vienna, Austria).
 The current version of the system is a demo version for testing and check the features.
 
-Demo on Heroku: https://ikmh.kofedev.com
-
 ## Base conceptions
 
 <p>The entity USER is on the top of the hierarchy.</p>
